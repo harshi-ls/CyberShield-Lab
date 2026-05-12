@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'splash_screen.dart';
 
 void main() {
   runApp(const CyberShieldApp());
@@ -17,7 +18,7 @@ class CyberShieldApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF050816),
         fontFamily: 'Roboto',
       ),
-      home: const CyberShieldHome(),
+      home: const SplashScreen(),
     );
   }
 }
