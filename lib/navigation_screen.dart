@@ -60,8 +60,31 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 }
 
-class ThreatScreen extends StatelessWidget {
+class ThreatScreen extends StatefulWidget {
   const ThreatScreen({super.key});
+
+  @override
+  State<ThreatScreen> createState() => _ThreatScreenState();
+}
+
+class _ThreatScreenState extends State<ThreatScreen>
+    with SingleTickerProviderStateMixin {
+      late AnimationController _controller;
+      @override
+void initState() {
+  super.initState();
+
+  _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+  )..repeat();
+}
+
+@override
+void dispose() {
+  _controller.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +136,10 @@ class ThreatScreen extends StatelessWidget {
                   color: Colors.cyanAccent.withOpacity(0.3),
                 ),
               ),
-              child: Stack(
+             child: AnimatedBuilder(
+  animation: _controller,
+  builder: (context, child) {
+    return Stack(
                 children: [
 
                   // WORLD MAP
@@ -126,6 +152,10 @@ class ThreatScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  CustomPaint(
+  size: const Size(double.infinity, double.infinity),
+  painter: AttackLinePainter(_controller.value),
+),
 
                   // THREAT NODES
                   Positioned(
@@ -152,8 +182,10 @@ class ThreatScreen extends StatelessWidget {
                     child: glowingDot(),
                   ),
                 ],
-              ),
+                );
+              },
             ),
+          ),
 
             const SizedBox(height: 25),
 
@@ -309,4 +341,51 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+}
+class AttackLinePainter extends CustomPainter {
+  final double animationValue;
+
+  AttackLinePainter(this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.redAccent.withOpacity(0.7)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final glowPaint = Paint()
+      ..color = Colors.redAccent.withOpacity(0.25)
+      ..strokeWidth = 8
+      ..style = PaintingStyle.stroke;
+
+    final points = [
+      [Offset(120, 90), Offset(500, 130)],
+      [Offset(180, 230), Offset(650, 180)],
+    ];
+
+    for (var pair in points) {
+      final start = pair[0];
+      final end = pair[1];
+
+      canvas.drawLine(start, end, glowPaint);
+      canvas.drawLine(start, end, paint);
+
+      final dx = start.dx + (end.dx - start.dx) * animationValue;
+      final dy = start.dy + (end.dy - start.dy) * animationValue;
+
+      final animatedDot = Paint()
+        ..color = Colors.cyanAccent
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(
+        Offset(dx, dy),
+        5,
+        animatedDot,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
