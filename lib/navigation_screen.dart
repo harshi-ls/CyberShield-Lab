@@ -342,6 +342,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+class AttackPath {
+  final Offset start;
+  final Offset end;
+
+  AttackPath(this.start, this.end);
+}
 class AttackLinePainter extends CustomPainter {
   final double animationValue;
 
@@ -359,14 +365,28 @@ class AttackLinePainter extends CustomPainter {
       ..strokeWidth = 8
       ..style = PaintingStyle.stroke;
 
-    final points = [
-      [Offset(120, 90), Offset(500, 130)],
-      [Offset(180, 230), Offset(650, 180)],
-    ];
+    final List<AttackPath> attacks = [
+  AttackPath(
+    const Offset(120, 90),
+    const Offset(500, 130),
+  ),
+  AttackPath(
+    const Offset(180, 230),
+    const Offset(650, 180),
+  ),
+  AttackPath(
+    const Offset(300, 120),
+    const Offset(900, 250),
+  ),
+  AttackPath(
+    const Offset(700, 80),
+    const Offset(400, 260),
+  ),
+];
 
-    for (var pair in points) {
-      final start = pair[0];
-      final end = pair[1];
+    for (var attack in attacks) {
+      final start = attack.start;
+final end = attack.end;
 
       canvas.drawLine(start, end, glowPaint);
       canvas.drawLine(start, end, paint);
