@@ -62,28 +62,58 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
 class ThreatScreen extends StatefulWidget {
   const ThreatScreen({super.key});
-
   @override
-  State<ThreatScreen> createState() => _ThreatScreenState();
+State<ThreatScreen> createState() => _ThreatScreenState();
 }
+
+
 
 class _ThreatScreenState extends State<ThreatScreen>
     with SingleTickerProviderStateMixin {
-      late AnimationController _controller;
-      @override
-void initState() {
-  super.initState();
 
-  _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 2),
-  )..repeat();
-}
+  late AnimationController _controller;
+  
+
+  List<AttackPath> attacks = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+
+    generateAttacks();
+  }
 
 @override
 void dispose() {
   _controller.dispose();
   super.dispose();
+}
+
+
+void generateAttacks() {
+  attacks = [
+    AttackPath(
+      const Offset(120, 90),
+      const Offset(500, 130),
+    ),
+    AttackPath(
+      const Offset(180, 230),
+      const Offset(650, 180),
+    ),
+    AttackPath(
+      const Offset(300, 120),
+      const Offset(900, 250),
+    ),
+    AttackPath(
+      const Offset(700, 80),
+      const Offset(400, 260),
+    ),
+  ];
 }
 
   @override
@@ -154,7 +184,10 @@ void dispose() {
                   ),
                   CustomPaint(
   size: const Size(double.infinity, double.infinity),
-  painter: AttackLinePainter(_controller.value),
+  painter: AttackLinePainter(
+  _controller.value,
+  attacks,
+),
 ),
 
                   // THREAT NODES
@@ -350,8 +383,12 @@ class AttackPath {
 }
 class AttackLinePainter extends CustomPainter {
   final double animationValue;
+  final List<AttackPath> attacks;
 
-  AttackLinePainter(this.animationValue);
+  AttackLinePainter(
+    this.animationValue,
+    this.attacks,
+  );
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -364,25 +401,6 @@ class AttackLinePainter extends CustomPainter {
       ..color = Colors.redAccent.withOpacity(0.25)
       ..strokeWidth = 8
       ..style = PaintingStyle.stroke;
-
-    final List<AttackPath> attacks = [
-  AttackPath(
-    const Offset(120, 90),
-    const Offset(500, 130),
-  ),
-  AttackPath(
-    const Offset(180, 230),
-    const Offset(650, 180),
-  ),
-  AttackPath(
-    const Offset(300, 120),
-    const Offset(900, 250),
-  ),
-  AttackPath(
-    const Offset(700, 80),
-    const Offset(400, 260),
-  ),
-];
 
     for (var attack in attacks) {
       final start = attack.start;
